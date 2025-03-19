@@ -51,7 +51,7 @@ jobs:
         run: docker save elhadji_sarr_burger_image | gzip > image.tar.gz
 
       - name: Upload Docker image artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v3.3.1
         with:
           name: docker-image
           path: image.tar.gz
@@ -59,7 +59,7 @@ jobs:
   push-docker-image:
     runs-on: ubuntu-latest
     needs: build-docker-image  # Ce job dépend du job "build-docker-image"
-    if: github.event_name == 'push'  # Exécuter uniquement sur un événement "push"
+    if: github.event_name == 'push'  
     steps:
       # Étape 1 : Checkout du code
       - name: Checkout code
