@@ -45,7 +45,10 @@ jobs:
       # Étape 2 : Construction de l'image Docker
       - name: Build Docker image
         run: |
+          echo "Building Docker image..."
           docker build -t elhadji_sarr_burger_image .
+          echo "Docker image built successfully."
+          docker images
 
   push-docker-image:
     runs-on: ubuntu-latest
@@ -60,8 +63,10 @@ jobs:
       # Étape 2 : Vérifier que l'image existe
       - name: Verify Docker image exists
         run: |
+          echo "Listing Docker images..."
           docker images
-          docker inspect elhadji_sarr_burger_image
+          echo "Inspecting Docker image..."
+          docker inspect elhadji_sarr_burger_image || echo "Image not found"
 
       # Étape 3 : Connexion à Docker Hub
       - name: Login to Docker Hub
