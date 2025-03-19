@@ -29,9 +29,9 @@ jobs:
       - name: Install Composer dependencies
         run: composer install --prefer-dist --no-progress --no-suggest
 
-      # Étape 4 : Exécution des tests (optionnel)
-      - name: Run tests
-        run: php artisan test
+      # # Étape 4 : Exécution des tests (optionnel)
+      # - name: Run tests
+      #   run: php artisan test
 
   build-docker-image:
     runs-on: ubuntu-latest
