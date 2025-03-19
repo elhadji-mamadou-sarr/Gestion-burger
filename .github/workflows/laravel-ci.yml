@@ -67,7 +67,7 @@ jobs:
 
       # Étape 2 : Télécharger l'artifact de l'image Docker
       - name: Download Docker image artifact
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v3.3.1
         with:
           name: docker-image
           path: .
