@@ -14,16 +14,16 @@
                 <div class="col-lg-12">
                     <div class="section_title text-center mb-80">
                         <span>Burger Menu</span>
-                        <h3>Best Ever Burgers</h3>
+                        <h3>Meilleur des Burgers</h3>
                     </div>
                 </div>
             </div>
             <div class="row">
                 @foreach ($products as $product)
                 <div class="col-xl-6 col-md-6 col-lg-6">
-                    <div class="single_delicious d-flex align-items-center">
+                    <div class="single_delicious d-block text-center">
                         <div class="thumb">
-                            <img src="{{ asset('storage/' . $product->image) }}" alt="{{ $product->name }}">
+                            <img src="{{ asset('storage/' . $product->image) }}" alt="{{ $product->name }}" width="200" height="200">
                         </div>
                         <div class="info">
                             <h3>{{ $product->name }}</h3>
@@ -31,7 +31,7 @@
                             <form class="add-to-cart-form" action="{{ route('cart.add.menu') }}" method="POST">
                                 @csrf
                                 <input type="hidden" name="product_id" value="{{ $product->id }}">
-                                <input type="number" name="quantity" value="1" min="1" max="{{ $product->stock }}" class="form-control-sm" style="width: 60px;">
+                                <input type="number" name="quantity" value="1" min="1" max="{{ $product->stock }}" class="form-control-sm" style="width: 50px;">
                                 <button type="submit" class="btn btn-sm btn-outline-warning">
                                     <i class="fa fa-shopping-basket"></i> Ajouter au panier
                                 </button>

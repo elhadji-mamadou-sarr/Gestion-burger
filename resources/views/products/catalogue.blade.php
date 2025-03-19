@@ -38,15 +38,10 @@
                                         <input type="hidden" name="product_id" value="{{ $product->id }}">
                                         
                                         <div class="input-group">
-                                            <input type="number" 
-                                                   name="quantity" 
-                                                   value="1" 
-                                                   min="1" 
+                                            <input type="number" name="quantity" value="1" min="1" 
                                                    max="{{ $product->stock }}"
-                                                   class="form-control"
-                                                   style="width: 80px;">
-                                            <button type="submit" 
-                                                    class="btn btn-outline-primary">
+                                                   class="form-control" style="width: 80px;">
+                                            <button type="submit" class="btn btn-outline-primary">
                                                 <i class="fas fa-cart-plus"></i> Ajouter
                                             </button>
                                         </div>
