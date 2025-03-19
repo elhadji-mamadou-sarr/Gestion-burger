@@ -1,3 +1,4 @@
+# Utiliser une image PHP avec Apache
 FROM php:8.2-apache
 
 # Définir le répertoire de travail
