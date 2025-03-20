@@ -10,7 +10,8 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04  # Version plus stable
+
     steps:
       # Étape 1 : Checkout du code
       - name: Checkout code
@@ -29,8 +30,9 @@ jobs:
         run: composer install --prefer-dist --no-progress --no-suggest
 
   build-docker-image:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     needs: build
+
     steps:
       # Étape 1 : Checkout du code
       - name: Checkout code
@@ -47,37 +49,35 @@ jobs:
         run: docker save elhadji_sarr_burger_image | gzip > image.tar.gz
 
       - name: Upload Docker image artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4  # Mise à jour vers la version 4
         with:
           name: docker-image
           path: image.tar.gz
 
   push-docker-image:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     needs: build-docker-image
     if: github.event_name == 'push'
-    steps:
-      # Étape 1 : Checkout du code
-      - name: Checkout code
-        uses: actions/checkout@v3
 
-      # Étape 2 : Télécharger l'artifact de l'image Docker
+    steps:
+      # Étape 1 : Télécharger l'artifact de l'image Docker
       - name: Download Docker image artifact
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4  # Mise à jour vers la version 4
         with:
           name: docker-image
           path: .
 
-      # Étape 3 : Charger l'image Docker depuis l'artifact
+      # Étape 2 : Charger l'image Docker depuis l'artifact
       - name: Load Docker image from artifact
         run: gunzip -c image.tar.gz | docker load
 
-      # Étape 4 : Connexion à Docker Hub
+      # Étape 3 : Connexion à Docker Hub
       - name: Login to Docker Hub
         run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
 
-      # Étape 5 : Tag et push de l'image Docker
+      # Étape 4 : Tag et push de l'image Docker
       - name: Tag and push Docker image to Docker Hub
         run: |
-          docker tag elhadji_sarr_burger_image ${{ secrets.DOCKER_USERNAME }}/elhadji_sarr_burger_image:latest
-          docker push ${{ secrets.DOCKER_USERNAME }}/elhadji_sarr_burger_image:latest
+          IMAGE_NAME="${{ secrets.DOCKER_USERNAME }}/elhadji_sarr_burger_image:latest"
+          docker tag elhadji_sarr_burger_image $IMAGE_NAME
+          docker push $IMAGE_NAME
