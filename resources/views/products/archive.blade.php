@@ -8,10 +8,7 @@
             <div class="d-flex justify-content-between">
                 
                 <h3>Gestion des Produits</h3>
-                <a href="{{ route('products.create') }}" class="btn btn-primary mb-3 ">
-                    Nouveau Produit
-                </a>
-
+              
             </div>
 
             <div class="card">
@@ -42,27 +39,11 @@
                                         <td>{{ $product->stock }}</td>
                                         <td class="d-flex justify-content-end align-items-center">
 
-                                            <div class="show">
-                                                <a href="{{ route('products.show', $product) }}" class="btn btn-sm btn-outline-light">
-                                                    <i class="flaticon-medical" style="font-size: 20px;"></i>
-                                                </a>
-                                            </div>
-                                            &nbsp;
-                                            &nbsp;
-                                            <div class="edit">
-                                                <a href="{{ route('products.edit', $product) }}" class="btn btn-sm btn-outline-warning">
-                                                    <i class="flaticon-pencil" style="font-size: 20px;"></i>
-                                                </a>
-                                            </div>
-                                            &nbsp;
-                                            &nbsp;
-
-                                            <form action="{{ route('products.destroy', $product) }}" method="POST"
-                                                style="display:inline">
+                                            <form action="{{ route('products.restore', $product) }}" method="POST" class="d-inline">
                                                 @csrf
-                                                @method('DELETE')
-                                                <button type="submit" class="btn btn-sm btn-outline-danger">
-                                                    <i class="flaticon-interface-5" style="font-size: 20px;"></i>
+                                                @method('PUT')
+                                                <button type="submit" class="btn btn-primary">
+                                                    <i class="flaticon-archive"></i> Restaurer
                                                 </button>
                                             </form>
                                         </td>

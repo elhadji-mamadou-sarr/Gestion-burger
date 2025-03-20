@@ -283,10 +283,9 @@
                         </div>
                         <ul class="nav nav-primary">
                             <li class="nav-item active">
-                                <a data-toggle="collapse" href="{{ route('dashboard') }}" >
+                                <a href="{{ route('dashboard') }}" >
                                     <i class="fas fa-home"></i>
                                     <p>Dashboard</p>
-                                    <span class="caret"></span>
                                 </a>
                             </li>
                             <li class="nav-section">
@@ -305,11 +304,19 @@
                                     <ul class="nav nav-collapse">
                                         @auth
                                         @if (Auth::user()->role == 'manager')
+
+                                            <li>
+                                                <a href="{{ route('categories.index') }}">
+                                                    <span class="sub-item">Categories</span>
+                                                </a>
+                                            </li>
+                                            
                                             <li>
                                                 <a href="{{ route('products.create') }}">
                                                     <span class="sub-item">Ajouter un burger</span>
                                                 </a>
                                             </li>
+
                                             <li>
                                                 <a href="{{ route('products.index') }}">
                                                     <span class="sub-item">Liste des Burgers</span>
@@ -357,23 +364,10 @@
                                 </div>
                             </li>
                             <li class="nav-item">
-                                <a data-toggle="collapse" href="#forms">
+                                <a href="{{ route('commandes.paiements') }}">
                                     <i class="fas fa-credit-card"></i>
                                     <p>Paiements</p>
-                                    <span class="caret"></span>
                                 </a>
-                                <div class="collapse" id="forms">
-                                    <ul class="nav nav-collapse">
-                                        <li>
-                                            <a href="">
-                                                <span class="sub-item">Ajouter un paiement</span>
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href=""><span class="sub-item">Paiements reçus</span></a>
-                                        </li>
-                                    </ul>
-                                </div>
                             </li>
 
                             <li class="nav-item">
@@ -390,7 +384,7 @@
                                             </a>
                                         </li>
                                         <li>
-                                            <a href=""><span class="sub-item">Les archives</span></a>
+                                            <a href="{{ route('products.archives') }}"><span class="sub-item">Les archives</span></a>
                                         </li>
                                     </ul>
                                 </div>
@@ -399,7 +393,7 @@
                             <li class="nav-item">
                                 <a href="{{ route('profile.edit') }}">
                                     <i class="flaticon-user"></i>
-                                    <p>Utilisateurs</p>
+                                    <p>Mon profile</p>
                                     {{-- <span class="caret"></span> --}}
                                 </a>
                                 {{-- <div class="collapse" id="user">

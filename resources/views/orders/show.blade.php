@@ -13,7 +13,7 @@
                 <div class="card-body">
                     <p><strong>Utilisateur :</strong> {{ $order->user->nom }} {{ $order->user->nom }}</p>
                     <p><strong>Statut :</strong> {{ App\Models\Order::STATUSES[$order->status] }}</p>
-                    <p><strong>Montant Total :</strong> {{ number_format($order->total_amount, 2, ',', ' ') }} €</p>
+                    <p><strong>Montant Total :</strong> {{ number_format($order->total_amount, 2, ',', ' ') }} FCFA</p>
                     <p><strong>Date de création :</strong> {{ $order->created_at->format('d/m/Y H:i') }}</p>
 
                     <form action="{{ route('commandes.updateStatus', $order) }}" method="POST">
@@ -43,14 +43,14 @@
                                 <span class="text-muted">x {{ $product->pivot->quantity }}</span>
                             </div>
                             <div>
-                                {{ number_format($product->price * $product->pivot->quantity, 2, ',', ' ') }} €
+                                {{ number_format($product->price * $product->pivot->quantity, 2, ',', ' ') }} FCFA
                             </div>
                         </div>
                     @endforeach
                     <hr>
                     <div class="d-flex justify-content-between fw-bold">
                         <span>Total :</span>
-                        <span>{{ number_format($order->total_amount, 2, ',', ' ') }} €</span>
+                        <span>{{ number_format($order->total_amount, 2, ',', ' ') }} FCFA</span>
                     </div>
                 </div>
             </div>

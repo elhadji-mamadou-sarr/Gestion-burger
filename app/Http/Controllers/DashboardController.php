@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Order;
-use App\Models\Product;
+use App\Models\Payment;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 
@@ -12,55 +12,52 @@ class DashboardController extends Controller
 {
     public function index()
     {
-        // Commandes en cours de la journée
-        $commandesEnCours = Order::whereDate('created_at', today())
-            ->whereIn('status', ['pending', 'preparing'])
-            ->count();
+        // Date du jour
+        $today = Carbon::today();
+
+        // Commandes en cours de la journée : statuts non validés
+        $ongoingOrders = Order::whereDate('created_at', $today)
+                        ->whereIn('status', ['pending', 'preparing', 'ready'])
+                        ->count();
 
         // Commandes validées de la journée
-        $commandesValidees = Order::whereDate('created_at', today())
-            ->where('status', 'paid')
-            ->count();
+        $validatedOrders = Order::whereDate('created_at', $today)
+                        ->where('status', 'paid')
+                        ->count();
 
-        // Recettes journalières
-        $recettesJournalieres = Order::whereDate('created_at', today())
-            ->where('status', 'paid')
-            ->sum('total_amount');
+        // Recettes journalières : somme des montants de paiement enregistrés aujourd'hui
+        $dailyRevenue = Payment::whereDate('payment_date', $today)
+                        ->sum('amount');
 
-        // Nombre de commandes par mois
-        $commandesParMois = Order::selectRaw('YEAR(created_at) as year, MONTH(created_at) as month, COUNT(*) as total')
-            ->groupBy('year', 'month')
-            ->orderBy('year', 'asc')
-            ->orderBy('month', 'asc')
-            ->get()
-            ->map(function ($item) {
-                return [
-                    'label' => Carbon::create($item->year, $item->month)->format('M Y'),
-                    'total' => $item->total,
-                ];
-            });
+        // Nombre de commandes par mois pour l'année en cours
+        $ordersPerMonth = Order::select(DB::raw('MONTH(created_at) as month'), DB::raw('count(*) as count'))
+                            ->whereYear('created_at', now()->year)
+                            ->groupBy('month')
+                            ->orderBy('month')
+                            ->get();
 
-            $produitsParProduitParMois = DB::table('order_products')
-            ->join('products', 'order_products.product_id', '=', 'products.id')
-            ->selectRaw('YEAR(order_products.created_at) as year, MONTH(order_products.created_at) as month, products.id as product_id, SUM(order_products.quantity) as total')
-            ->groupBy('year', 'month', 'product_id')
-            ->orderBy('year', 'asc')
-            ->orderBy('month', 'asc')
-            ->get()
-            ->map(function ($item) {
-                return (object) [ // Convertir en objet pour éviter l'erreur
-                    'label' => Carbon::create($item->year, $item->month)->format('M Y'),
-                    'product_id' => $item->product_id,
-                    'total' => $item->total,
-                ];
-            });
+        // Nombre de produits vendus par catégorie par mois pour l'année en cours
+        $productsByCategory = DB::table('order_products')
+                            ->join('orders', 'order_products.order_id', '=', 'orders.id')
+                            ->join('products', 'order_products.product_id', '=', 'products.id')
+                            ->join('categories', 'products.categorie_id', '=', 'categories.id')
+                            ->select(
+                                DB::raw('MONTH(orders.created_at) as month'),
+                                'categories.nom as category',
+                                DB::raw('SUM(order_products.quantity) as total')
+                            )
+                            ->whereYear('orders.created_at', now()->year)
+                            ->groupBy('month', 'categories.nom')
+                            ->orderBy('month')
+                            ->get();
 
+        // Passage des données à la vue
         return view('dashboard', compact(
-            'commandesEnCours',
-            'commandesValidees',
-            'recettesJournalieres',
-            'commandesParMois',
-            'produitsParProduitParMois'
+            'ongoingOrders',
+            'validatedOrders',
+            'dailyRevenue',
+            'ordersPerMonth',
+            'productsByCategory'
         ));
     }
 }

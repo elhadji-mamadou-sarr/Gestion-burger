@@ -15,7 +15,8 @@ class Product extends Model
         'description',
         'image',
         'stock',
-        'is_available'
+        'is_available',
+        'categorie_id'
     ];
 
     protected $casts = [
@@ -39,5 +40,11 @@ class Product extends Model
     {
         return $query->where('is_available', true)
                     ->where('stock', '>', 0);
+    }
+
+     
+    public function categorie()
+    {
+        return $this->belongsTo(Categorie::class);
     }
 }

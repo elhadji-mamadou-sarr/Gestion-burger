@@ -2,6 +2,7 @@
 
 use App\Events\OrderReady;
 use App\Http\Controllers\CartController;
+use App\Http\Controllers\CategorieController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\OrderController;
@@ -27,7 +28,6 @@ Route::get('/menu',[ProductController::class, 'menu'])->name('menu');
 Route::get('/dashboard', [DashboardController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
 
 
-
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
@@ -38,24 +38,33 @@ Route::middleware('auth')->group(function () {
 Route::middleware('auth')->group(function () {
     Route::get('/products/create', [ProductController::class, 'create'])->name('products.create');
     Route::resource('products', ProductController::class)->except(['clientCatalog', 'show']);
+    
     Route::put('/products/{product}/restore', [ProductController::class, 'restore'])->name('products.restore');
     Route::put('/products/{product}/archive', [ProductController::class, 'archive'])->name('products.archive');
     
+    Route::get('/products/archives', [ProductController::class, 'archiveList'])->name('products.archives');
+    
+    Route::get('commandes/paiements', [OrderController::class, 'payment'])->name('commandes.paiements');
+    
     Route::resource('commandes', OrderController::class)->except(['updateStatus', 'store']);
+    
+    Route::resource('categories', CategorieController::class)->except('destroy');
+    Route::delete('/categories/{categorie}/delete', [CategorieController::class, 'destroy'])->name('categories.destroy');
+    
     Route::post('/commandes/{order}', [OrderController::class, 'updateStatus'])->name('commandes.updateStatus');
+    
 });
 
 // Avant le middleware
 Route::get('/products/catalogue', [ProductController::class, 'clientCatalog'])
      ->name('products.catalogue');
 
-     Route::middleware('auth')->group(function () {
+Route::middleware('auth')->group(function () {
     // Routes réservées aux clients
     Route::get('/products/{product}', [ProductController::class, 'show'])->name('products.show');
-    
-    
-
+  
 });
+
 Route::post('/cart/add', [CartController::class, 'addToCart'])->name('cart.add');
 // Modification de quantité
 Route::put('/cart/{product}', [CartController::class, 'update'])->name('cart.update');

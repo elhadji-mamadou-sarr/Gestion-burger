@@ -44,6 +44,20 @@
                         <label for="stock" class="form-label">Stock</label>
                         <input type="number" class="form-control" id="stock" name="stock" value="{{ old('stock', $product->stock) }}" required>
                     </div>
+                    
+
+                    <div class="form-group">
+                        <label for="categorie" class="form-label fw-bold">Catégorie</label>
+                        <select class="form-control" id="categorie" name="categorie_id" required>
+                            <option value="">Sélectionner une catégorie</option>
+                            @foreach ($categories as $categorie)
+                                <option value="{{ $categorie->id }}" {{ old('categorie_id', $product->categorie_id ?? '') == $categorie->id ? 'selected' : '' }}>
+                                    {{ $categorie->nom }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+                    
                     <div class="card-action">
                         <button class="btn btn-success" type="submit">Enregistrer</button>
                     </div>

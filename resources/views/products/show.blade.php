@@ -22,7 +22,7 @@
                         <p><strong>Description :</strong> {{ $product->description }}</p>
                         <p><strong>Prix :</strong> {{ number_format($product->price, 2, ',', ' ') }} €</p>
                         <p><strong>Stock :</strong> {{ $product->stock }}</p>
-                        <p><strong>Catégorie :</strong> {{ $product->category->name ?? 'Non catégorisé' }}</p>
+                        <p><strong>Catégorie :</strong> {{ $product->categorie->nom ?? 'Non catégorisé' }}</p>
                         <p><strong>Ajouté le :</strong> {{ $product->created_at->format('d/m/Y H:i') }}</p>
                     </div>
                 </div>
@@ -39,9 +39,29 @@
                             <i class="flaticon-interface-5"></i> Supprimer
                         </button>
                     </form>
-                    <a href="{{ route('products.index') }}" class="btn btn-secondary">
-                        <i class="flaticon-back"></i> Retour à la liste
-                    </a>
+                    
+                    @if ($product->is_available)
+                    
+                        <form action="{{ route('products.archive', $product) }}" method="POST" class="d-inline">
+                            @csrf
+                            @method('PUT')
+                            <button type="submit" class="btn btn-light" onclick="return confirm('Voulez-vous vraiment archiver ce produit ?')">
+                                <i class="flaticon-archive"></i> Archiver
+                            </button>
+                        </form>
+
+                    @else
+
+                        <form action="{{ route('products.restore', $product) }}" method="POST" class="d-inline">
+                            @csrf
+                            @method('PUT')
+                            <button type="submit" class="btn btn-primary">
+                                <i class="flaticon-archive"></i> Restaurer
+                            </button>
+                        </form>
+
+                    @endif
+                    
                 </div>
             </div>
         </div>

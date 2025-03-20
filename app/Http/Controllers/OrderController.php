@@ -10,7 +10,9 @@ use Illuminate\Support\Facades\Auth;
 
 use Illuminate\Support\Facades\Mail;
 use App\Mail\OrderReadyMail;
+use App\Models\Payment;
 use Barryvdh\DomPDF\Facade\Pdf;
+use DateTime;
 
 class OrderController extends Controller
 {
@@ -63,9 +65,10 @@ class OrderController extends Controller
         
         $order->update(['status' => $request->status]);
         if ($order->status == 'ready') {
-
             $pdf = Pdf::loadView('emails.order-invoice', compact('order'));
             Mail::to($order->user->email)->send(new OrderReadyMail($order, $pdf));
+        }elseif ($order->status == 'paid') {
+            $this->paid($order);
         }
 
         return back()->with('success', 'Statut mis à jour avec succès.');
@@ -78,54 +81,27 @@ class OrderController extends Controller
         return view('orders.create', compact('products'));
     }
 
-    // public function store(Request $request)
-    // {
-    //     $request->validate([
-    //         'products' => 'required|array|min:1',
-    //         'products.*.id' => 'required|exists:products,id',
-    //         'products.*.quantity' => 'required|integer|min:1'
-    //     ]);
+    public function paid(Order $order)
+    {
+        $payment = new Payment();
 
-    //     try {
-    //         DB::beginTransaction();
+        $payment->order_id = $order->id;
+        $payment->amount = $order->total_amount;
+        $payment->payment_date = now();
 
-    //         $order = Auth::user()->orders()->create([
-    //             'status' => 'pending',
-    //             'total_amount' => 0
-    //         ]);
+        $payment->save();
+    }
 
-    //         $total = 0;
+    function paiememt() {
+        $payments = Payment::paginate(10);
+        return view('orders.payments', compact('payments'));
+    }
 
-    //         foreach ($request->products as $item) {
-    //             $product = Product::find($item['id']);
-                
-    //             if ($product->stock < $item['quantity']) {
-    //                 throw new \Exception("Stock insuffisant pour {$product->name}");
-    //             }
-
-    //             $order->products()->attach($product->id, [
-    //                 'quantity' => $item['quantity']
-    //             ]);
-
-    //             $product->stock -= $item['quantity'];
-    //             $product->save();
-                
-    //             $total += $product->price * $item['quantity'];
-    //         }
-
-    //         $order->total_amount = $total;
-    //         $order->save();
-
-    //         DB::commit();
-
-    //         return redirect()->route('orders.show', $order)
-    //             ->with('success', 'Commande créée avec succès');
-
-    //     } catch (\Exception $e) {
-    //         DB::rollBack();
-    //         return back()->withErrors($e->getMessage());
-    //     }
-    // }
+    public function payment()
+    {
+        $payments = Payment::paginate(10);
+        return view('orders.payments', compact('payments'));
+    }
 
    
 }
